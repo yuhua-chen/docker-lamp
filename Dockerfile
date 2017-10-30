@@ -5,11 +5,11 @@ ENV REFRESHED_AT 2016-08-21
 # based on dgraziotin/lamp
 # MAINTAINER Daniel Graziotin <daniel@ineed.coffee>
 
-ENV DOCKER_USER_ID 501 
+ENV DOCKER_USER_ID 501
 ENV DOCKER_USER_GID 20
 
-ENV BOOT2DOCKER_ID 1000
-ENV BOOT2DOCKER_GID 50
+ENV BOOT2DOCKER_ID 1001
+ENV BOOT2DOCKER_GID 1001
 
 # Tweaks to give Apache/PHP write permissions to the app
 RUN usermod -u ${BOOT2DOCKER_ID} www-data && \
@@ -26,15 +26,14 @@ RUN add-apt-repository -y ppa:ondrej/php && \
   apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4F4EA0AAE5267A6C && \
   apt-get update && \
   apt-get -y upgrade && \
-  apt-get -y install supervisor wget git apache2 php-xdebug libapache2-mod-php5.6 mysql-server php5.6 php5.6-mysql pwgen php5.6-apc php5.6-mcrypt php5.6-gd php5.6-xml php5.6-mbstring php5.6-gettext zip unzip php5.6-zip  && \
+  apt-get -y install supervisor wget git apache2 libapache2-mod-php7.1 php7.1 php7.1-cli php7.1-curl php7.1-dev php7.1-gd php7.1-imap php7.1-mbstring php7.1-mcrypt php7.1-mysql php7.1-pgsql php7.1-pspell php7.1-xml php7.1-xmlrpc php-apcu php-memcached php-pear php-redis zip unzip && \
   apt-get -y autoremove && \
+  apt-get clean && \
+  rm -fr /var/lib/apt/lists/* && \
   echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
-# Update CLI PHP to use 5.6
-RUN ln -sfn /usr/bin/php5.6 /etc/alternatives/php
-
 # needed for phpMyAdmin
-RUN phpenmod mcrypt
+RUN phpenmod mcrypt mbstring
 
 # Add image configuration and scripts
 ADD supporting_files/start-apache2.sh /start-apache2.sh
